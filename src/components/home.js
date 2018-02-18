@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
+import MdEdit from 'react-icons/lib/md/edit';
+import MdDelete from 'react-icons/lib/md/delete';
+
 import Header from './header';
 
 class Home extends Component {
     render() {
         return (
             <div className='container'>
-                <Header />
-                <div>This is Home Component</div>
+                <Header />                
                 <table className='table'>
                     <thead>
                         <tr>
@@ -25,7 +27,10 @@ class Home extends Component {
                             <td>17-12-2018</td>
                             <td>7000</td>
                             <td>Active</td>
-                            <td></td>
+                            <td>
+                                <MdEdit />
+                                <MdDelete />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
