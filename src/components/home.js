@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import MdEdit from 'react-icons/lib/md/edit';
 import MdDelete from 'react-icons/lib/md/delete';
 
+import { hashHistory } from 'react-router';
+
 import Header from './header';
 
 class Home extends Component {
@@ -28,7 +30,7 @@ class Home extends Component {
                             <td>7000</td>
                             <td>Active</td>
                             <td>
-                                <MdEdit />
+                                <MdEdit onClick={() => hashHistory.push('/edit')} />
                                 <MdDelete />
                             </td>
                         </tr>
