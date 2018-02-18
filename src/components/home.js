@@ -7,6 +7,8 @@ import MdDelete from 'react-icons/lib/md/delete';
 import { hashHistory } from 'react-router';
 
 import Header from './header';
+import AdvanceSearch from './advance-search';
+
 import { getAllAgreements, deleteAgreement } from '../back-end-helper';
 import { captureUpdateValues } from '../actions/agreement-actions';
 
@@ -16,19 +18,23 @@ class Home extends Component {
 
         this.state = {
             agreements: [],
+            backup: [],
             loading: false,
-            deleting: false
+            deleting: false,
+            showAdvanceSearch: false
         };
 
         this.handleDelete = this.handleDelete.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
+        this.handleAdvanceSearch = this.handleAdvanceSearch.bind(this);        
+        this.doAdvanceSearch = this.doAdvanceSearch.bind(this);
     }
     componentDidMount() {
         this.setState({loading: true})
 
         getAllAgreements()
         .then((data) => { 
-            this.setState({ agreements: data, loading: false })
+            this.setState({ agreements: data, backup: data, loading: false })
         })
         .catch((error) => console.error(error));
     }
@@ -51,10 +57,72 @@ class Home extends Component {
         this.props.captureUpdateValues(values);
         hashHistory.push('/edit');
     }
+
+    handleAdvanceSearch() {
+        if (this.state.showAdvanceSearch === 'true') {
+            this.setState({ showAdvanceSearch: false });
+        } else {
+            this.setState({ showAdvanceSearch: true });
+        }
+    }
+
+    doAdvanceSearch(values) {
+        const { field, searchValue, operator } = values;
+        console.log('called from child ', values);      
+        
+        const searchResult = this.state.agreements.filter((value, index) => {
+            if (field === 'Name') {
+                if (operator === 'Equal To') {
+                    if (value.name === searchValue) {
+                        return value;
+                    } 
+                } else {
+                    return value;
+                } 
+            } else if (field === 'Start Date') {
+                if (operator === 'Equal To') {
+                    if (value.startDate === searchValue) {
+                        return value;
+                    } 
+                } else {
+                    return value;
+                } 
+            } else if (field === 'Value') {
+                if (operator === 'Equal To') {
+                    if (value.value === searchValue) {
+                        return value;
+                    } 
+                } else {
+                    return value;
+                } 
+            } else {
+                if (operator === 'Status') {
+                    if (value.status === searchValue) {
+                        return value;
+                    } 
+                } else {
+                    return value;
+                } 
+            }
+        });
+
+        if (searchResult) {
+            this.setState({ agreements: searchResult });
+        } else {
+            this.setState({ agreements: this.state.backup });
+        }
+    }
+
     render() {
+        console.log(this.state.showAdvanceSearch);
         return (
             <div className='container'>
                 <Header />            
+
+                <div>
+                    <span onClick={() => this.handleAdvanceSearch()}>Advance Search</span>
+                    <AdvanceSearch style={{ display:  'none' }} handleAdvanceSearch={this.doAdvanceSearch}/>
+                </div>
 
                 <div style={{ color: 'blue', textAlign: 'center', display: `${this.state.loading}` === 'true' ? 'block' : 'none' }}>loading ...</div>
                 <div style={{ color: 'blue', textAlign: 'center', display: `${this.state.deleting}` === 'true' ? 'block' : 'none' }}>deleting ...</div>
