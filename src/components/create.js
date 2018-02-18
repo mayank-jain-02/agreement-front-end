@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import { hashHistory } from 'react-router';
 import Header from './header';
+
+import { saveAgreement } from '../back-end-helper';
 
 require('react-datepicker/dist/react-datepicker.css');
 
@@ -14,7 +17,10 @@ class Create extends Component {
             startDate: moment(),
             endDate: moment(),
             value: '',
-            status: ''
+            status: '',
+
+            loading: false,
+            showErrorMsg: false,
         };
     
         this.handleNameChange = this.handleNameChange.bind(this);
@@ -46,17 +52,41 @@ class Create extends Component {
         this.setState({status: event.target.value});
     }
 
-    handleSubmit(event) {
-        console.log(this.state);
+    handleSubmit(event) {        
+        if (this.state.name === '' || this.state.startDate === '' || this.state.endDate === '' ||
+            this.state.value === '' || this.state.status === '') {                
+                this.setState({ showErrorMsg: true });
+                return;
+            } else {
+                this.setState({ showErrorMsg: false });
+        }
+
+        this.setState({loading: true})
+        
+        saveAgreement(this.state)
+        .then((data) => {
+            this.setState({loading: false})
+            hashHistory.push('/')
+        })
+        .catch((error) => {
+            this.setState({loading: false})
+            console.error(error)
+        });
         event.preventDefault();
     }
 
-    render() {
+    render() {        
         return (
             <div className='container'>
                 <Header />
-                <div><b>Create Agreement</b></div>
+                <div>
+                    <b>Create Agreement</b>
+                    <span style={{ color: 'blue', textAlign: 'center', display: `${this.state.loading}` === 'true' ? 'block' : 'none' }}>saving ...</span>
+                </div>
 
+                <div style={{ color: 'red', textAlign: 'center', display: `${this.state.showErrorMsg}` === 'true' ? 'block' : 'none' }}>
+                    Please enter values in all the fields.
+                </div>
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
                         <label>Name</label>
@@ -85,8 +115,8 @@ class Create extends Component {
                             <select id="inputStatus" className="form-control" onChange={this.handleStatusChange} value={this.state.status}>
                                 <option>Choose...</option>
                                 <option>Active</option>
-                                <option>Active</option>
-                                <option>Active</option>
+                                <option>Renewed</option>
+                                <option>Amended</option>
                             </select>
                         </div>                        
                     </div>
