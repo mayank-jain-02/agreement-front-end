@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import MdEdit from 'react-icons/lib/md/edit';
 import MdDelete from 'react-icons/lib/md/delete';
 
@@ -6,7 +8,7 @@ import { hashHistory } from 'react-router';
 
 import Header from './header';
 import { getAllAgreements, deleteAgreement } from '../back-end-helper';
-
+import { captureUpdateValues } from '../actions/agreement-actions';
 
 class Home extends Component {
     constructor() {
@@ -19,6 +21,7 @@ class Home extends Component {
         };
 
         this.handleDelete = this.handleDelete.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
     }
     componentDidMount() {
         this.setState({loading: true})
@@ -42,6 +45,11 @@ class Home extends Component {
             this.setState({ agreements: remainingAgreements });
         })
         .catch((error) => console.error(error));
+    }
+
+    handleUpdate(values) {        
+        this.props.captureUpdateValues(values);
+        hashHistory.push('/edit');
     }
     render() {
         return (
@@ -72,7 +80,7 @@ class Home extends Component {
                                     <td>{value.value}</td>
                                     <td>{value.status}</td>
                                     <td>
-                                        <MdEdit style={{ cursor: 'pointer' }} onClick={() => hashHistory.push('/edit')} />
+                                        <MdEdit style={{ cursor: 'pointer' }} onClick={() => this.handleUpdate(value)} />
                                         <MdDelete style={{ cursor: 'pointer' }} onClick={() => this.handleDelete(value.name)} />
                                     </td>
                                 </tr>
@@ -85,4 +93,13 @@ class Home extends Component {
     }
 }
 
-export default Home;
+function mapStateToProps(state) {
+    return {
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ captureUpdateValues: captureUpdateValues }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

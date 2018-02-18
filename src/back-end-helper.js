@@ -27,3 +27,18 @@ export function deleteAgreement(name) {
                 .then(response => response.data)
                 .catch(error => console.log(error));
 }
+
+export function updateAgreement(values) {
+    const payload = {
+        name: values.name,
+        startDate: values.startDate.format('DD-MM-YYYY'),
+        endDate: values.endDate.format('DD-MM-YYYY'),
+        value: values.value,
+        status: values.status,
+        oldName: values.oldName
+    }       
+
+    return axios.put(`${backEndUrl}/update-agreement`, payload)
+                .then(response => response.data)
+                .catch(error => console.log(error));
+}

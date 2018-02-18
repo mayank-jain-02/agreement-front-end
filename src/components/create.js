@@ -108,7 +108,7 @@ class Create extends Component {
                         <div className="form-group col-md-6">
                             <label>Value</label>
                             <input type="number" className="form-control" id="inputValue" placeholder="Value" 
-                                onChange={this.handleValueChange} />
+                                onChange={this.handleValueChange} value={this.state.value} />
                         </div>
                         <div className="form-group col-md-6">
                             <label>Status</label>

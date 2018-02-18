@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import { hashHistory } from 'react-router';
 import Header from './header';
+
+import { updateAgreement } from '../back-end-helper';
 
 require('react-datepicker/dist/react-datepicker.css');
 
@@ -10,11 +13,16 @@ class Edit extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: '',
             name: '',
             startDate: moment(),
             endDate: moment(),
             value: '',
-            status: ''
+            status: '',
+
+            oldName: '',
+            loading: false,
+            showErrorMsg: false,
         };
     
         this.handleNameChange = this.handleNameChange.bind(this);
@@ -26,6 +34,31 @@ class Edit extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
     
+    componentDidMount() {
+        const { create } = this.props.agreement;        
+
+        if (create && create.name) {
+            const sdate = create.startDate.split('-');
+            const edate = create.endDate.split('-');
+
+            const sd = new Date(`${sdate[1]}-${sdate[0]}-${sdate[2]}`);
+            const ed = new Date(`${edate[1]}-${edate[0]}-${edate[2]}`);            
+
+            if (create) {
+                this.setState({
+                    id: create.id,
+                    name: create.name,
+                    startDate: moment(sd),
+                    endDate: moment(ed),
+                    value: create.value,
+                    status: create.status,
+
+                    oldName: create.name
+                })
+            }
+        }
+    }
+
     handleNameChange(event) {
         this.setState({name: event.target.value});
     }
@@ -48,14 +81,40 @@ class Edit extends Component {
 
     handleSubmit(event) {
         console.log(this.state);
+        if (this.state.name === '' || this.state.startDate === '' || this.state.endDate === '' ||
+        this.state.value === '' || this.state.status === '') {                
+            this.setState({ showErrorMsg: true });
+            return;
+        } else {
+            this.setState({ showErrorMsg: false });
+        }
+
+        this.setState({loading: true})
+        
+        updateAgreement(this.state)
+        .then((data) => {
+            this.setState({loading: false})
+            hashHistory.push('/')
+        })
+        .catch((error) => {
+            this.setState({loading: false})
+            console.error(error)
+        });
         event.preventDefault();
     }
 
-    render() {        
+    render() { 
         return (
             <div className='container'>
                 <Header />
-                <div><b>Update Agreement</b></div>
+                <div>
+                    <b>Update Agreement</b>
+                    <span style={{ color: 'blue', textAlign: 'center', display: `${this.state.loading}` === 'true' ? 'block' : 'none' }}>saving ...</span>
+                </div>
+
+                <div style={{ color: 'red', textAlign: 'center', display: `${this.state.showErrorMsg}` === 'true' ? 'block' : 'none' }}>
+                    Please enter values in all the fields.
+                </div>
 
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
@@ -78,15 +137,15 @@ class Edit extends Component {
                         <div className="form-group col-md-6">
                             <label>Value</label>
                             <input type="number" className="form-control" id="inputValue" placeholder="Value" 
-                                onChange={this.handleValueChange} />
+                                onChange={this.handleValueChange} value={this.state.value} />
                         </div>
                         <div className="form-group col-md-6">
                             <label>Status</label>
                             <select id="inputStatus" className="form-control" onChange={this.handleStatusChange} value={this.state.status}>
                                 <option>Choose...</option>
                                 <option>Active</option>
-                                <option>Active</option>
-                                <option>Active</option>
+                                <option>Renewed</option>
+                                <option>Amended</option>
                             </select>
                         </div>                        
                     </div>
@@ -100,7 +159,7 @@ class Edit extends Component {
 
 function mapStateToProps(state) {
     return {
-
+        agreement: state
     }
 }
 
@@ -110,4 +169,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapDispatchToProps, mapStateToProps)(Edit);
+export default connect(mapStateToProps, mapDispatchToProps)(Edit);
