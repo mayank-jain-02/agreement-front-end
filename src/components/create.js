@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 import Header from './header';
+
+require('react-datepicker/dist/react-datepicker.css');
 
 class Create extends Component {
     constructor(props) {
         super(props);
         this.state = {
             name: '',
-            startDate: '',
-            endDate: '',
+            startDate: moment(),
+            endDate: moment(),
             value: '',
             status: ''
         };
@@ -27,12 +30,12 @@ class Create extends Component {
         this.setState({name: event.target.value});
     }
 
-    handleStartDateChange(event) {
-        this.setState({startDate: event.target.value});
+    handleStartDateChange(date) {
+        this.setState({startDate: date});
     }
 
-    handleEndDateChange(event) {
-        this.setState({endDate: event.target.value});
+    handleEndDateChange(date) {
+        this.setState({endDate: date});
     }
 
     handleValueChange(event) {
@@ -44,7 +47,7 @@ class Create extends Component {
     }
 
     handleSubmit(event) {
-        alert('A name was submitted: ' + this.state.value);
+        console.log(this.state);
         event.preventDefault();
     }
 
@@ -63,27 +66,27 @@ class Create extends Component {
                     <div className="form-row">                        
                         <div className="form-group col-md-6">
                             <label>Start Date</label>
-                            <input type="text" className="form-control" id="inputStartDate" placeholder="Start Date" 
-                                onChange={this.handleStartDateChange}/>
+                            <DatePicker className="form-control" selected={this.state.startDate} onChange={this.handleStartDateChange} />
                         </div>
                         <div className="form-group col-md-6">
                             <label>End Date</label>
-                            <input type="text" className="form-control" id="inputEndDate" placeholder="End Date" 
-                                onChange={this.handleEndDateChange}/>
+                            <DatePicker className="form-control" selected={this.state.endDate} onChange={this.handleEndDateChange} />
                         </div>
                     </div>                    
                     
                     <div className="form-row">
                         <div className="form-group col-md-6">
                             <label>Value</label>
-                            <input type="text" className="form-control" id="inputValue" placeholder="Value" 
-                                onChange={this.handleValueChange}/>
+                            <input type="number" className="form-control" id="inputValue" placeholder="Value" 
+                                onChange={this.handleValueChange} />
                         </div>
                         <div className="form-group col-md-6">
                             <label>Status</label>
-                            <select id="inputStatus" className="form-control" onChange={this.handleStatusChange}>
-                                <option selected>Choose...</option>
-                                <option>...</option>
+                            <select id="inputStatus" className="form-control" onChange={this.handleStatusChange} value={this.state.status}>
+                                <option>Choose...</option>
+                                <option>Active</option>
+                                <option>Active</option>
+                                <option>Active</option>
                             </select>
                         </div>                        
                     </div>
