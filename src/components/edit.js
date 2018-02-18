@@ -4,7 +4,7 @@ import Header from './header';
 class Edit extends Component {
     render() {
         return (
-            <div>
+            <div className='container'>
                 <Header />
                 <div>This is Edit Component</div>
             </div>

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import Header from './header';
 
 class Create extends Component {
     render() {
         return (
-            <div>
+            <div className='container'>
                 <Header />
                 <div>This is Create Component</div>
             </div>
@@ -12,4 +14,16 @@ class Create extends Component {
     }
 }
 
-export default Create;
+function mapStateToProps(state) {
+    return {
+
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+
+    }
+}
+
+export default connect(mapDispatchToProps, mapStateToProps)(Create);

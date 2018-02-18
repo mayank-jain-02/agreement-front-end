@@ -9,7 +9,7 @@ class Header extends Component {
                     widht: '100%',
                     height: '30px',
                     marginTop: '1%',
-                    marginBottom: '1%',
+                    marginBottom: '2%',
                     borderBottom: '1px solid grey'
                 }
             } >
